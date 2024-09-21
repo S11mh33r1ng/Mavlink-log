@@ -15,7 +15,9 @@ lat = ""
 lon = ""
 alt = ""
 hdop = ""
+vdop = ""
 h_acc = ""
+v_acc = ""
 n_sats = ""
 
 csv_file = 'autopilot_data.csv'
@@ -43,7 +45,7 @@ try:
     with open(csv_file,'a', newline='')as file:
         writer = csv.writer(file)
         if not header_done:
-            writer.writerow(['Date', 'Time', 'Latitude', "Longitude", "Altitude(m)", "HDOP", "H_Acc(m)", "Number of sats"])
+            writer.writerow(['Date', 'Time', 'Latitude', "Longitude", "Altitude(m)", "HDOP", "VDOP", "H_Acc(m)", "V_Acc(m)", "Number of sats"])
             header_done = True
         
         while True:
@@ -56,7 +58,9 @@ try:
                     lon = str(gps_message["lon"] /1e7)
                     alt = str(gps_message["alt"] /1000)
                     hdop = str(gps_message["eph"] /100)
+                    vdop = str(gps_message["epv"] / 100)
                     h_acc = str(gps_message["h_acc"] /1000)
+                    v_acc = str(gps_message["v_acc"] /1000)
                     n_sats = str(gps_message["satellites_visible"])
                 if msg.get_type() == 'SYSTEM_TIME':
                     time_message = msg.to_dict()
@@ -65,7 +69,7 @@ try:
                     date_time = datetime.datetime.fromtimestamp(time_sec)
                     date = str(date_time.strftime('%d.%m.%Y'))
                     time = str(date_time.strftime('%H:%M:%S'))
-                data = [date, time, lat, lon, alt, hdop, h_acc, n_sats]
+                data = [date, time, lat, lon, alt, hdop, vdop, h_acc, v_acc, n_sats]
                 send_data_to_csv(writer, data)
 except:
     print("Script interrupted. Closing file...")
